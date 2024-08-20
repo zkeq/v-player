@@ -6,6 +6,9 @@ import { AlbumArtwork } from '../albumArtwork/albumArtwork.entity'
 import { FolderTrack } from '../folderTrack/folder-track.entity'
 import { Folder } from '../folder/folder.entity'
 import { ArtistData } from '../artist/artist-data'
+import { ClauseCreator } from '../utils/clause-creator'
+import { Constants } from '../utils/constant/constants'
+import { QueryParts } from '../utils/constant/query-parts'
 import { Track } from './track.entity'
 import { TrackModel } from './track-model'
 
@@ -206,6 +209,39 @@ export class TrackService {
     return albumData as AlbumData[]
   }
 
+  public async getAlbumDataForTrackArtists(trackArtists: string[]) {
+
+    let filterQuery: string = ''
+
+    if (trackArtists && trackArtists.length > 0)
+      filterQuery = ` AND ${ClauseCreator.createOrLikeClause('t.artists', trackArtists, Constants.columnValueDelimiter)}`
+
+
+    const albumData =  await this.trackRepo.query(`${QueryParts.selectAlbumDataQueryPart(true)} ${filterQuery}
+                                                AND t.albumKey IS NOT NULL AND t.albumKey <> ''
+                                                GROUP BY t.albumKey;`)
+    return albumData as AlbumData[]
+  }
+
+  public async getAlbumDataForAlbumArtists(albumArtists: string[]) {
+
+    let filterQuery: string = ''
+
+    if (albumArtists && albumArtists.length > 0)
+      filterQuery = ` AND ${ClauseCreator.createOrLikeClause('t.albumArtists', albumArtists, Constants.columnValueDelimiter)}`
+
+
+    const albumData = await this.trackRepo.query(`${QueryParts.selectAlbumDataQueryPart(true)} ${filterQuery}
+                                                AND t.albumKey IS NOT NULL AND t.albumKey <> ''
+                                                GROUP BY t.albumKey;`)
+
+
+    console.log(albumData)
+
+    return albumData as AlbumData[]
+    return albumData
+  }
+
   public async getAlbumDataThatNeedsIndexing() {
     const albumData = await this.trackRepo.createQueryBuilder('t').select([
       't.albumTitle as albumTitle',
@@ -241,9 +277,10 @@ export class TrackService {
   public async getTrackArtistData() {
     const res = await this.trackRepo
       .createQueryBuilder('t')
-      .select('DISTINCT t.artists\', \'artists\'')
-      .innerJoin('t.folderTrack', 'ft')
-      .innerJoin('ft.folder', 'f')
+      .select(['DISTINCT t.artists as artists', 't.albumKey as albumKey', 'a.artworkId as artworkId'])
+      .innerJoin(FolderTrack, 'ft', 'ft.trackID = t.trackId')
+      .innerJoin(Folder, 'f', 'ft.folderId = f.folderId')
+      .leftJoin(AlbumArtwork, 'a', 't.albumKey = a.albumKey')
       .where('t.indexingSuccess = :indexingSuccess', { indexingSuccess: 1 })
       .andWhere('t.needsIndexing = :needsIndexing', { needsIndexing: 0 })
       .getRawMany()
@@ -253,12 +290,13 @@ export class TrackService {
   public async getAlbumArtistData() {
     const res = await this.trackRepo
       .createQueryBuilder('t')
-      .select('DISTINCT t.albumArtist\', \'artists\'')
-      .innerJoin('t.folderTrack', 'ft')
-      .innerJoin('ft.folder', 'f')
+      .select('DISTINCT t.albumArtists', 'artists')
+      .innerJoin(FolderTrack, 'ft', 'ft.trackID = t.trackId')
+      .innerJoin(Folder, 'f', 'ft.folderId = f.folderId')
       .where('t.indexingSuccess = :indexingSuccess', { indexingSuccess: 1 })
       .andWhere('t.needsIndexing = :needsIndexing', { needsIndexing: 0 })
       .getRawMany()
+
     return res as ArtistData[]
   }
 }

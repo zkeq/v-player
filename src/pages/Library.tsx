@@ -166,7 +166,7 @@ function ArtistPanel() {
   const { data } = useUserArtists()
   return <GridRow>
     {
-      data?.artists.map(art => <ArtistCover compact data={art} key={art.id} />)
+      data?.artists.map(art => <ArtistCover data={art} key={art.id} />)
     }
   </GridRow>
 }

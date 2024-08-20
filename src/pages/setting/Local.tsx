@@ -1,4 +1,4 @@
-import { Button, IconButton, Typography } from '@mui/material'
+import { Box, Button, IconButton, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { dialog } from '@electron/remote'
 import { ipcRenderer } from 'electron'
@@ -13,10 +13,18 @@ import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocalStore } from '@/store/local'
 import Col from '@/components/Col'
+import PageTransition from '@/components/PageTransition'
 
 function FolderItem({ folder, onRemove }: { folder: any; onRemove: (id: number) => void }) {
   const [isHovering, setIsHovering] = useState(false)
-  return <ListItem className='gap-2 cursor-pointer' dense onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
+
+  const openFolder = useCallback(async () => {
+    await ipcRenderer.invoke('base/open-path', folder.path)
+  }, [folder])
+
+  return <ListItem
+    onClick={openFolder}
+    className='gap-2 cursor-pointer' dense onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
     <FolderIcon/>
     <ListItemText primary={folder['path']}></ListItemText>
     {
@@ -32,8 +40,7 @@ export default function Local() {
     folders: []
     count: number
   }>(['local', 'folders'], async () => {
-    const res = await ipcRenderer.invoke('folder/all-folder')
-    return res
+    return await ipcRenderer.invoke('folder/all-folder')
   })
   async function handleAdd() {
     const openDialogReturnValue = await dialog.showOpenDialog({
@@ -53,23 +60,25 @@ export default function Local() {
     await ipcRenderer.invoke('folder/remove-folder', folderId)
     await refetch()
   }, [])
-  return <div>
-    <div className='mb-3'>
-      <Typography variant='subtitle1'>{t`common.local`}</Typography>
-    </div>
-    <Col variant='caption' title='文件夹' more={
-      <Button sx={{ ml: 'auto' }} size='small' onClick={handleAdd}><AddIcon fontSize='small'/>添加文件夹</Button>
-    }>
-    <List sx={{ py: 0 }}>
-      {
-        foldersRes?.folders.map((folder) => {
-          return <FolderItem key={folder['folderId']} folder={folder} onRemove={handleRemove}></FolderItem>
-        })
-      }
-    </List>
-  </Col>
-    <Col variant='caption' title='刷新'>
-      <Button variant='contained' size='small' onClick={handleSync}><SyncIcon fontSize='small'/>立即刷新</Button>
-    </Col>
-  </div>
+  return <PageTransition>
+    <Box className='flex flex-col gap-4 pr-2'>
+        <div className='mb-3'>
+          <Typography variant='subtitle1'>{t`common.local`}</Typography>
+        </div>
+        <Col variant='caption' title='文件夹' more={
+          <Button sx={{ ml: 'auto' }} size='small' onClick={handleAdd}><AddIcon fontSize='small'/>添加文件夹</Button>
+        }>
+          <List sx={{ py: 0 }}>
+            {
+              foldersRes?.folders.map((folder) => {
+                return <FolderItem key={folder['folderId']} folder={folder} onRemove={handleRemove}></FolderItem>
+              })
+            }
+          </List>
+        </Col>
+        <Col variant='caption' title='刷新'>
+          <Button variant='contained' size='small' onClick={handleSync}><SyncIcon fontSize='small'/>立即刷新</Button>
+        </Col>
+    </Box>
+  </PageTransition>
 }

@@ -56,6 +56,7 @@ export class Desktop implements BaseDesktop {
   }
 
   public openPath(path: string): void {
+    console.log('open path', path)
     shell.openPath(path)
   }
 

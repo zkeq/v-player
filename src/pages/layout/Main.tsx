@@ -20,6 +20,7 @@ export default function Main({
     'artist',
     'daily',
     'local-album',
+    'local-artist',
     'video',
     'moods_and_genres_detail',
     'list_collection',

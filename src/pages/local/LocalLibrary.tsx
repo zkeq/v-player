@@ -3,24 +3,22 @@ import { useTheme } from '@mui/material/styles'
 import { memo, useEffect, useState } from 'react'
 import { Button, Card, Typography } from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
-import AlbumIcon from '@mui/icons-material/Album'
 import { useNavigate } from 'react-router-dom'
 import SettingsIcon from '@mui/icons-material/Settings'
 import { sampleSize } from 'lodash'
-import { ipcRenderer } from 'electron'
 import { useTranslation } from 'react-i18next'
-import Cover from './components/Cover'
 import PageTransition from '@/components/PageTransition'
 import MYTabs from '@/components/Tabs'
 import { bytesToSize, formatDuring, sizeOfImage } from '@/util/fn'
-import GridRow from '@/components/GridRow'
 import { useReplacePlayQueue } from '@/hooks/usePlayQueue'
 import SwitchCard from '@/components/SwitchCard'
 import useQueryTrack from '@/pages/local/hooks/useQueryTrack'
 import { useQueryAlbums } from '@/pages/local/hooks/useQueryAlbum'
 import Image from '@/components/Image'
-import Migration from '@/components/migration'
-import LocalTrackList from '@/pages/local/LocalTrackList'
+import { LocalTracksPanel } from '@/pages/local/panels/track'
+import { LocalAlbumPanel } from '@/pages/local/panels/album'
+import { LocalArtistPanel } from '@/pages/local/panels/artist'
+import { LocalPlaylistPanel } from '@/pages/local/panels/playlist'
 
 const AlbumCovers = memo(({ albums }: { albums: any[] }) => {
   const navigate = useNavigate()
@@ -42,31 +40,6 @@ const AlbumCovers = memo(({ albums }: { albums: any[] }) => {
   )
 })
 
-function LocalTracksPanel() {
-  const { data, isLoading } = useQueryTrack()
-  return <Box>
-    <LocalTrackList tracks={data?.tracks}></LocalTrackList>
-  </Box>
-}
-
-function LocalAlbumPanel() {
-  const { data, isLoading } = useQueryAlbums()
-  return <GridRow>
-    {
-      data?.albums.map(((al: any) => (<Cover type='album' key={al.id} data={al} />)))
-    }
-  </GridRow>
-}
-function LocalArtistPanel() {
-  return <Box>
-    <Migration />
-  </Box>
-}
-function LocalPlaylistPanel() {
-  return <Box>
-    <Migration />
-  </Box>
-}
 
 function FavCard() {
   const theme = useTheme()
@@ -138,11 +111,11 @@ export default function LocalLibrary() {
       <FavCard />
       <div className='grid grid-cols-1 grid-rows-4 gap-2 col-span-1'>
         <SwitchCard color={theme.palette.tertiaryContainer.main} title={t`main.local.manage`} icon={<SettingsIcon fontSize='small' />} onChange={() => {
-          navigate('/setting')
+          navigate('/local-setting')
         }} />
-        <SwitchCard color={theme.palette.secondaryContainer.main} title={t`main.local.open_dir`} icon={<AlbumIcon fontSize='small' />} onClick={() => {
-          ipcRenderer.invoke('base/open-path', '~/Downloads/')
-        }} />
+        {/*<SwitchCard color={theme.palette.secondaryContainer.main} title={t`main.local.open_dir`} icon={<AlbumIcon fontSize='small' />} onClick={() => {*/}
+        {/*  ipcRenderer.invoke('base/open-path', '/Users/yoda/Downloads')*/}
+        {/*}} />*/}
       </div>
     </div>
     <Box className='h-full flex flex-col pr-2' sx={{ color: theme.palette.onSurface.main }}>

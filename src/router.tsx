@@ -35,6 +35,8 @@ import PodcastDetail from '@/pages/detail/Podcast'
 import MyPodcast from '@/pages/podcast/MyPodcast'
 import PodcastGenresDetail from '@/pages/detail/PodcastGenresDetail'
 import Minimal from '@/Minimal'
+import LocalSetting from '@/pages/setting/Local'
+import LocalArtistPage from '@/pages/local/components/Artist'
 
 function lazyLoad(component: ReactNode) {
   return <Suspense>{component}</Suspense>
@@ -56,7 +58,7 @@ const router = createHashRouter(
         {
           id: 'redirect_home',
           path: '/',
-          element: <Home />,
+          element: <LocalLibrary />,
         },
         {
           id: 'home',
@@ -171,6 +173,16 @@ const router = createHashRouter(
           id: 'local-album',
           path: '/local/album/:id?',
           element: <LocalAlbumPage />,
+        },
+        {
+          id: 'local-artist',
+          path: '/local/artist/:name?',
+          element: <LocalArtistPage />,
+        },
+        {
+          id: 'local-setting',
+          path: '/local-setting',
+          element: <LocalSetting />,
         },
         {
           id: 'wallpaper',

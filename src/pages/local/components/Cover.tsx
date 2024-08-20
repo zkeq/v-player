@@ -12,7 +12,7 @@ import { PlayIcon } from '@/components/icons/icons'
 import { queryAlbumTracks } from '@/pages/local/hooks/useQueryAlbum'
 import { useReplacePlayQueue } from '@/hooks/usePlayQueue'
 
-function Cover({ data, type }: {
+function LocalCover({ data, type }: {
   data: any
   type: 'album' | 'playlist'
 }) {
@@ -116,4 +116,4 @@ function Cover({ data, type }: {
   )
 }
 
-export default memo(Cover)
+export default memo(LocalCover)

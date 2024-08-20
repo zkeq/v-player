@@ -9,6 +9,8 @@ export default function useQueryTrack() {
       totalDt,
       totalSize,
     }
+  }, {
+    staleTime: 5 * 1000 * 60,
   })
   return {
     data,

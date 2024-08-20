@@ -3,27 +3,45 @@ import { useParams } from 'react-router-dom'
 import QueueMusicIcon from '@mui/icons-material/QueueMusic'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import { motion } from 'framer-motion'
-import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import LocalTrackList from '../components/LocalTrackList'
+import { useEffect, useMemo, useState } from 'react'
 import PageTransition from '@/components/PageTransition'
 import PlayListSkeleton from '@/pages/detail/PlayListSkeleton'
 import { formatDuring } from '@/util/fn'
 import Image from '@/components/Image'
-import ImageViewer from '@/components/ImageViewer'
-import { useQueryAlbumTracks } from '@/pages/local/hooks/useQueryAlbum'
+import { queryAlbumTracks, useQueryAlbumForArtist } from '@/pages/local/hooks/useQueryAlbum'
 import { useReplacePlayQueue } from '@/hooks/usePlayQueue'
+import GridRow from '@/components/GridRow'
+import LocalCover from '@/pages/local/components/Cover'
+import { Track } from '@/types'
 
 function Header({ data }: { data: any }) {
+  const [tracks, setTracks] = useState<Track[]>([])
   const theme = useTheme()
-  const [showImageView, setShowImageView] = useState(false)
   const { replaceQueueAndPlay } = useReplacePlayQueue()
   const { t } = useTranslation()
 
-  const tracksDt = data?.tracks?.reduce((p: number, c: any) => p + c.dt, 0)
+  const trackDt = useMemo(() => {
+    if (tracks.length === 0)
+      return 0
 
-  function handlePlay() {
-    replaceQueueAndPlay(data.tracks, 0, 'local', `本地专辑: ${data.name}`)
+    return tracks.reduce((acc, cur) => acc + cur.dt, 0)
+  }, [tracks])
+  async function loadTracks() {
+    let tracks: Track[] = []
+    for (const al of data.albums) {
+      const list = await queryAlbumTracks(al.id)
+      tracks = [...tracks, ...list]
+    }
+    setTracks(tracks)
+  }
+
+  useEffect(() => {
+    loadTracks()
+  }, [data])
+
+  async function handlePlay() {
+    replaceQueueAndPlay(tracks, 0, 'local', `本地歌曲-歌手：${data.name}`)
   }
 
   return (
@@ -43,17 +61,13 @@ function Header({ data }: { data: any }) {
         <div className="flex justify-between -ml-2 -mr-4 relative" style={{ height: '317px' }}>
           <Image
             className="absolute"
-            src={data?.picUrl}
+            src={data?.avatar}
             fit="cover"
             gradient={`linear-gradient(90deg, ${theme.palette.surface.main} 0%, rgb(0 0 0 / 0%) 50%, ${theme.palette.surface.main}b3 100%), linear-gradient(360deg, ${theme.palette.surface.main} 0%, rgb(0 0 0 / 0%) 100%)`}
           />
-          {
-            data?.picUrl
-              && <ImageViewer open={showImageView} src={data?.picUrl} onClose={() => setShowImageView(false)}/>
-          }
 
           <div className="absolute h-full w-full flex flex-col">
-            <div className="flex-1" onClick={() => setShowImageView(true)}></div>
+            <div className="flex-1"></div>
             <div className="flex flex-col mx-3 mb-4 gap-2">
               <Typography variant="h4">{data?.name}</Typography>
               <div className="flex flex-col">
@@ -67,9 +81,9 @@ function Header({ data }: { data: any }) {
                   style={{ minWidth: '96px' }}
                 >
                   <Typography variant="body2">
-                    {data?.tracks.length}
+                    {data?.albums.length}
                   </Typography>
-                  <Typography variant="caption">首曲目</Typography>
+                  <Typography variant="caption">个专辑</Typography>
                 </div>
                 <Divider flexItem variant='middle' orientation="vertical"/>
                 <div
@@ -77,7 +91,7 @@ function Header({ data }: { data: any }) {
                   style={{ minWidth: '96px' }}
                 >
                   <QueueMusicIcon fontSize='small'/>
-                  <Typography variant="caption">专辑</Typography>
+                  <Typography variant="caption">歌手</Typography>
                 </div>
                 <Divider flexItem variant='middle' orientation="vertical"/>
 
@@ -86,25 +100,25 @@ function Header({ data }: { data: any }) {
                   style={{ minWidth: '96px' }}
                 >
                   <Typography variant="body2">
-                    {formatDuring(tracksDt)}
+                    {formatDuring(trackDt)}
                   </Typography>
-                  <Typography variant="caption">时长</Typography>
+                  <Typography variant="caption">总时长</Typography>
                 </div>
               </div>
               <div className='flex gap-3'>
                 <Button
-                    disableElevation
-                    variant='contained'
-                    sx={{
-                      'bgcolor': `${theme.palette.primary.main}1f`,
-                      'color': theme.palette.primary.main,
-                      'borderRadius': 2.5,
-                      'px': 1.5,
-                      'py': 1.5,
-                      '&:hover': {
-                        bgcolor: `${theme.palette.primary.main}38`,
-                      },
-                    }} onClick={handlePlay}>
+                  disableElevation
+                  variant='contained'
+                  sx={{
+                    'bgcolor': `${theme.palette.primary.main}1f`,
+                    'color': theme.palette.primary.main,
+                    'borderRadius': 2.5,
+                    'px': 1.5,
+                    'py': 1.5,
+                    '&:hover': {
+                      bgcolor: `${theme.palette.primary.main}38`,
+                    },
+                  }} onClick={handlePlay}>
                   <PlayArrowIcon color='primary' className='mr-1' />{t`common.play_all`}
                 </Button>
               </div>
@@ -115,27 +129,31 @@ function Header({ data }: { data: any }) {
     </motion.div>
   )
 }
-export default function LocalAlbumPage() {
+export default function LocalArtistPage() {
   const params = useParams()
-  const theme = useTheme()
-  const { data: tracks, isLoading } = useQueryAlbumTracks(params.id)
-  const album = useMemo(() => {
+  const { data, isLoading } = useQueryAlbumForArtist(params.name)
+
+  const artistData = useMemo(() => {
     return {
       ...history.state.usr,
-      tracks,
+      albums: data?.albums ?? [],
     }
-  }, [tracks])
+  }, [data])
   return (
     <PageTransition>
       {isLoading}
       <Box>
         {
-          isLoading ? <PlayListSkeleton/> : <Header data={album}/>
+          isLoading ? <PlayListSkeleton/> : <Header data={artistData}/>
         }
         <Box className='h-4'></Box>
-        {
-          tracks && <LocalTrackList tracks={tracks}/>
-        }
+        <GridRow>
+          {
+            artistData?.albums?.map((album: any) => (
+              <LocalCover data={album} key={album.id} type='album'/>
+            ))
+          }
+        </GridRow>
       </Box>
     </PageTransition>
 

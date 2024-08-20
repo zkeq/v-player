@@ -1,13 +1,19 @@
 import { Injectable } from '@nestjs/common'
+import { isEmpty } from 'lodash'
 import { DataDelimiter } from '../utils/data-delimiter'
 import { TrackService } from '../track/track.service'
+import { Constants } from '../utils/constant/constants'
+import { FileAccess } from '../utils/io/file-access'
 import { ArtistData } from './artist-data'
 import { ArtistModel } from './artist-model'
 import { ArtistType } from './artist-type'
 
 @Injectable()
 export class ArtistService {
-  constructor(private trackService: TrackService) {}
+  constructor(
+    private trackService: TrackService,
+    private fileAccess: FileAccess,
+  ) {}
 
   public async getArtists(artistType: ArtistType) {
     const artistDatas: ArtistData[] = []
@@ -27,19 +33,24 @@ export class ArtistService {
 
     for (const artistData of artistDatas) {
       const artists: string[] = DataDelimiter.fromDelimitedString(artistData.artists)
-
       for (const artist of artists) {
         const processedArtist: string = artist.toLowerCase().trim()
+        const avatar = this.artworkPath(artistData.artworkId)
 
         if (!alreadyAddedArtists.includes(processedArtist)) {
           alreadyAddedArtists.push(processedArtist)
-          artistModels.push(new ArtistModel(artist))
+          artistModels.push(new ArtistModel(artist, avatar))
         }
       }
     }
 
     alreadyAddedArtists = []
-
     return artistModels
+  }
+
+  artworkPath(artworkId: string): string {
+    if (isEmpty(artworkId))
+      return Constants.emptyImage
+    return `file:///${this.fileAccess.coverArtFullPath(artworkId)}`
   }
 }

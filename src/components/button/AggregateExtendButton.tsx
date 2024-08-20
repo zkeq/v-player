@@ -17,6 +17,7 @@ export default function AggregateExtendButton() {
     'recent',
     'setting',
     'local-album',
+    'local-artist',
     'moods_and_genres',
     'moods_and_genres_detail',
     'list_collection',

@@ -12,8 +12,8 @@ export class ArtistController {
 
   ) {}
 
-  @IpcHandle('get-artists')
-  async getAlbums() {
+  @IpcHandle('all-artists')
+  async allArtists() {
     return this.artistService.getArtists(ArtistType.allArtists)
   }
 }

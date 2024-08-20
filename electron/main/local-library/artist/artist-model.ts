@@ -1,7 +1,7 @@
 import { Strings } from '../utils/strings'
 
 export class ArtistModel {
-  constructor(public name: string) {}
+  constructor(public name: string, public avatar?: string) {}
 
   public isSelected: boolean = false
 

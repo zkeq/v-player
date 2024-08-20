@@ -10,6 +10,7 @@ export async function queryAlbumTracks(albumKey: string) {
       const tracks = await getLocalAlbumTrack(albumKey)
       return tracks ?? []
     },
+    staleTime:  5 * 1000 * 60,
   })
 }
 
@@ -17,6 +18,8 @@ export function useQueryAlbumTracks(albumKey: string) {
   const { data, isLoading, refetch } = useQuery(['local', 'album', 'tracks', albumKey], async () => {
     const tracks = await getLocalAlbumTrack(albumKey)
     return tracks ?? []
+  }, {
+    staleTime: 5 * 1000 * 60,
   })
   return {
     data,
@@ -31,6 +34,23 @@ export function useQueryAlbums() {
     return {
       albums,
     }
+  }, {
+    staleTime: 5 * 1000 * 60,
+  })
+  return {
+    data,
+    isLoading,
+  }
+}
+
+export function useQueryAlbumForArtist(artistName: string) {
+  const { data, isLoading } = useQuery(['local', 'albums', artistName], async () => {
+    const albums = await ipcRenderer.invoke('album/artist-albums', [artistName], 3)
+    return {
+      albums,
+    }
+  }, {
+    staleTime: 5 * 1000 * 60,
   })
   return {
     data,

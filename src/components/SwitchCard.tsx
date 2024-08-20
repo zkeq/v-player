@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material/styles'
-import { Paper, Typography } from '@mui/material'
+import { Card, CardActionArea, Typography } from '@mui/material'
 import { ReactNode, useMemo } from 'react'
 
 export default function SwitchCard({
@@ -43,9 +43,7 @@ export default function SwitchCard({
     }
     onChange(!checked)
   }
-  return <Paper
-      elevation={0}
-      className="py-3 px-4 cursor-pointer flex items-center flex-grow"
+  return <Card
       onClick={handleClick}
       sx={{
         borderRadius: 4,
@@ -53,12 +51,23 @@ export default function SwitchCard({
         color: checked ? theme.palette.onPrimary.main : theme.palette.onSurfaceVariant.main,
       }}
     >
+    <CardActionArea
+      sx={{
+        height: '100%',
+        display: 'flex',
+        paddingX: 2,
+        paddingY: 1.5,
+        alignItems: 'center',
+        justifyContent: 'start',
+      }}>
       {icon}
       <div className="flex flex-col items-start justify-center ml-2">
-      <Typography variant='caption' className="line-clamp-1">{ title }</Typography>
+        <Typography variant='caption' className="line-clamp-1">{ title }</Typography>
         {
           subTitle && <Typography variant='caption' className="line-clamp-1">{ subTitle }</Typography>
         }
       </div>
-</Paper>
+    </CardActionArea>
+
+</Card>
 }
