@@ -1,26 +1,107 @@
-import { useCallback, useState } from 'react'
-import { Divider, IconButton, Typography } from '@mui/material'
+import { useCallback, useMemo, useState } from 'react'
+import { Box, Divider, IconButton, Typography } from '@mui/material'
 import { css, cx } from '@emotion/css'
 import PlayIcon from '@mui/icons-material/PlayArrow'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import { AnimatePresence, motion } from 'framer-motion'
 import { LocalTrack } from '@shared/types'
+import { useTranslation } from 'react-i18next'
+import { alpha, useTheme } from '@mui/material/styles'
+import { useSnackbar } from 'notistack'
 import { formatDuring, formatFrequency } from '@/util/fn'
 import { useAddToPlayQueue } from '@/hooks/usePlayQueue'
+import { useContextMenu } from '@/hooks/useContextMenu'
+import { useLocalStore } from '@/store/local'
+import { usePlayerStore } from '@/store/player'
+import { addTrackToPlaylist, removeTrackFromPlaylist } from '@/pages/local/api/playlist'
 
-function Track({ track, index }: {
+function Track({ track, index, playlistId }: {
   track: LocalTrack
   index: number
+  playlistId?: number
 }) {
   const [isHovering, setIsHovering] = useState(false)
   const { addToQueueAndPlay } = useAddToPlayQueue()
+  const { playlist } = useLocalStore()
+  const { openContextMenu } = useContextMenu()
+  const { enqueueSnackbar } = useSnackbar()
+
+  const { t } = useTranslation()
+  const { track: current } = usePlayerStore()
+  const theme = useTheme()
+
+  const isCurrent = useMemo(() => {
+    return current?.id === track.id
+  }, [current, track])
+
   const handlePlay = useCallback(()=> {
     addToQueueAndPlay(track as any, { id: 0, type: 'local', name: '本地音乐' })
   }, [track])
-  return <div
+
+  const addToPlaylist = useCallback(async (playlist: any) => {
+    await addTrackToPlaylist(track.id, playlist.id)
+    enqueueSnackbar('已添加到播放列表', { variant: 'info' })
+
+  }, [track])
+
+  const removeFromPlaylist = useCallback(async (trackId: any) => {
+    await removeTrackFromPlaylist(track.id, playlistId)
+  }, [track, playlistId])
+
+  const playNext = useCallback((track: any) => {
+
+  }, [track])
+
+  const handleContextMenu = useCallback((e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    openContextMenu(e, [
+      {
+        type: 'item',
+        label: t`common.next_play`,
+        onClick: () => {
+          playNext(track)
+        },
+      },
+      {
+        type: 'divider',
+      },
+      {
+        type: 'submenu',
+        label: t`common.add_playlist`,
+        items: playlist.map((list: any) => {
+          return {
+            type: 'item',
+            label: list.name,
+            onClick: async () => {
+              addToPlaylist(list)
+            },
+          }
+        }),
+      },
+      ...(playlistId
+        ? [{
+            type: 'item' as any,
+            label: t`common.remove_from_playlist`,
+            onClick: () => {
+              removeFromPlaylist(track.id)
+            },
+          }]
+        : []),
+    ], {
+      useCursorPosition: true,
+    })
+  }, [track])
+  return <Box
+    sx={{
+      'transition': 'background-color .35s ease',
+      'color': isCurrent ? theme.palette.primary.main : null,
+      '&:hover': {
+        bgcolor: alpha(theme.palette.surfaceVariant.main, 0.2),
+      },
+    }}
+    onContextMenu={handleContextMenu}
     className={
-      cx('grid gap-4 px-1 h-16 items-center cursor-pointer mb-1 rounded-lg', css`grid-template-columns: 3fr 2fr 1fr [last] 126px;`)
+      cx('grid grid-cols-3 gap-4 px-2 h-16 items-center cursor-pointer mb-1 rounded-lg', css`grid-template-columns: 3fr 2fr 1fr [last] 126px;`)
     } onMouseEnter={() => setIsHovering(true)}
     onMouseLeave={() => setIsHovering(false)}>
     <div className='flex gap-2'>
@@ -91,7 +172,7 @@ function Track({ track, index }: {
               ease: [0.34, 1.56, 0.64, 1],
             }}
           >
-            <IconButton><MoreHorizIcon fontSize='small'/></IconButton>
+            <IconButton onClick={handleContextMenu}><MoreHorizIcon fontSize='small'/></IconButton>
 
           </motion.div>
         }
@@ -99,7 +180,7 @@ function Track({ track, index }: {
       </div>
 
     </div>
-  </div>
+  </Box>
 }
 
 export default function LocalTrackList({ tracks, className }: {

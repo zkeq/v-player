@@ -11,19 +11,23 @@ import { ArtistModule } from './artist/artist.module'
 import { Folder } from './folder/folder.entity'
 import { BaseModule } from './base/base.module'
 import { Track } from './track/track.entity'
-import { FolderTrack } from './folderTrack/folder-track.entity'
 import { TrackModule } from './track/track.module'
+import { FolderTrack } from './folderTrack/folder-track.entity'
 import { FolderTrackModule } from './folderTrack/folder-track.module'
 import { RemovedTrack } from './removedTrack/removedTrack.entity'
 import { RemovedTrackModule } from './removedTrack/removedTrack.module'
 import { AlbumArtworkModule } from './albumArtwork/albumArtwork.module'
 import { AlbumArtwork } from './albumArtwork/albumArtwork.entity'
+import { Playlist } from './playlist/playlist.entity'
+import { PlaylistModule } from './playlist/playlist.module'
+import { PlaylistTrack } from './playlistTrack/playlist-track.entity'
+import { PlaylistTrackModule } from './playlistTrack/playlist-track.module'
 
 const userDataPath = app.getPath('userData')
 const OrmModule = TypeOrmModule.forRoot({
   type: 'sqlite',
   database: `${userDataPath}/databases/musicYouDB.db`,
-  entities: [Folder, Track, FolderTrack, RemovedTrack, AlbumArtwork],
+  entities: [Folder, Track, FolderTrack, RemovedTrack, AlbumArtwork, Playlist, PlaylistTrack],
   synchronize: true,
 })
 const electronModule = ElectronModule.registerAsync({
@@ -45,6 +49,8 @@ const electronModule = ElectronModule.registerAsync({
     FolderTrackModule,
     RemovedTrackModule,
     AlbumArtworkModule,
+    PlaylistModule,
+    PlaylistTrackModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -37,6 +37,7 @@ import PodcastGenresDetail from '@/pages/detail/PodcastGenresDetail'
 import Minimal from '@/Minimal'
 import LocalSetting from '@/pages/setting/Local'
 import LocalArtistPage from '@/pages/local/components/Artist'
+import LocalPlaylistPage from '@/pages/local/components/Playlist'
 
 function lazyLoad(component: ReactNode) {
   return <Suspense>{component}</Suspense>
@@ -178,6 +179,11 @@ const router = createHashRouter(
           id: 'local-artist',
           path: '/local/artist/:name?',
           element: <LocalArtistPage />,
+        },
+        {
+          id: 'local-playlist',
+          path: '/local/playlist/:id?',
+          element: <LocalPlaylistPage />,
         },
         {
           id: 'local-setting',

@@ -17,3 +17,18 @@ export default function useQueryTrack() {
     isLoading,
   }
 }
+
+export function useQueryLocalPlaylistTrack(id: number) {
+  const { data, isLoading } = useQuery(['local', 'playlist', 'tracks', id], async () => {
+    const { data, totalDt, totalSize } = await ipcRenderer.invoke('track/get-playlist-tracks', id)
+    return {
+      tracks: data,
+      totalDt,
+      totalSize,
+    }
+  })
+  return {
+    data,
+    isLoading,
+  }
+}

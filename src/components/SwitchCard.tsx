@@ -44,6 +44,7 @@ export default function SwitchCard({
     onChange(!checked)
   }
   return <Card
+      elevation={0}
       onClick={handleClick}
       sx={{
         borderRadius: 4,

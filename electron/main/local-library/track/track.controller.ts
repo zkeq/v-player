@@ -47,9 +47,17 @@ export class TrackController {
     }
   }
 
-  @IpcHandle('get-tracks')
+  @IpcHandle('get-album-tracks')
   async getAlbumTracks(albumKey: string) {
     const tracks = await this.trackService.getTracksForAlbums(albumKey)
+    return {
+      data: tracks,
+    }
+  }
+
+  @IpcHandle('get-playlist-tracks')
+  async getPlaylistTracks(playlistId: number) {
+    const tracks = await this.trackService.getTracksForPlaylist(playlistId)
     return {
       data: tracks,
     }

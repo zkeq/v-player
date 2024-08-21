@@ -39,8 +39,6 @@ const AlbumCovers = memo(({ albums }: { albums: any[] }) => {
     </div>
   )
 })
-
-
 function FavCard() {
   const theme = useTheme()
   const { t } = useTranslation()

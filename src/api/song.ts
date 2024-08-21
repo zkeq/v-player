@@ -118,6 +118,7 @@ export function getLyricNew(id: number) {
   return request<{
     briefDesc: string
     lrc: Lyric
+    yrc: Lyric
     klyric: Lyric
     tlyric: Lyric
     lyricUser: LyricUser

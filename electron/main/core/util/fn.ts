@@ -6,12 +6,12 @@ import { extname } from 'node:path'
  * @param {string} filePath - 文件路径
  * @returns {boolean} 是否为 MP3 文件
  */
-export function isMP3File(filePath) {
+export function isMP3File(filePath: string) {
   const extName = extname(filePath)
   return extName === '.mp3' || extName === '.m4a'
 }
 
-export function isFlacFile(filePath) {
+export function isFlacFile(filePath: string) {
   const extName = extname(filePath)
   return extName === '.flac'
 }
@@ -43,7 +43,7 @@ export function isMutagenInstalled() {
   })
 }
 
-export function runPythonScript(scriptPath, args) {
+export function runPythonScript(scriptPath: string, args: any) {
   return new Promise((resolve, reject) => {
     const python = spawn('python', [scriptPath, ...args])
 

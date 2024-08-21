@@ -9,6 +9,7 @@ import { ArtistData } from '../artist/artist-data'
 import { ClauseCreator } from '../utils/clause-creator'
 import { Constants } from '../utils/constant/constants'
 import { QueryParts } from '../utils/constant/query-parts'
+import { PlaylistTrack } from '../playlistTrack/playlist-track.entity'
 import { Track } from './track.entity'
 import { TrackModel } from './track-model'
 
@@ -50,53 +51,46 @@ export class TrackService {
 
   async getAllTracksNormalized() {
     const tracks = await this.trackRepo.find()
-    return tracks.map((track) => {
-      const trackModel = new TrackModel(track)
+    return tracks.map(track => this.normalizeTrack(track))
+  }
 
-      return {
-        id: trackModel.id,
-        name: trackModel.fileName,
-        url: trackModel.path,
-        dt: trackModel.durationInMilliseconds,
-        bit: trackModel.bitRate,
-        sample: trackModel.sampleRate,
-        ar: trackModel.artists?.split(',').map(i => ({
-          name: i,
-          id: i,
-        })),
-        al: {
-          id: trackModel.albumTitle,
-          name: trackModel.albumTitle,
-        },
-        size: trackModel.fileSizeInBytes,
-      }
-    })
+  normalizeTrack(track: Track) {
+    const trackModel = new TrackModel(track)
+
+    return {
+      id: trackModel.id,
+      name: trackModel.fileName,
+      url: trackModel.path,
+      dt: trackModel.durationInMilliseconds,
+      bit: trackModel.bitRate,
+      sample: trackModel.sampleRate,
+      ar: trackModel.artists?.split(',').map(i => ({
+        name: i,
+        id: i,
+      })),
+      al: {
+        id: trackModel.albumTitle,
+        name: trackModel.albumTitle,
+      },
+      size: trackModel.fileSizeInBytes,
+    }
   }
 
   public async getTracksForAlbums(albumKey: string) {
     const tracks = await this.trackRepo.findBy({ albumKey: albumKey ?? '' })
 
-    return tracks.map((track) => {
-      const trackModel = new TrackModel(track)
+    return tracks.map(track => this.normalizeTrack(track))
 
-      return {
-        id: trackModel.id,
-        name: trackModel.fileName,
-        url: trackModel.path,
-        dt: trackModel.durationInMilliseconds,
-        bit: trackModel.bitRate,
-        sample: trackModel.sampleRate,
-        ar: trackModel.artists?.split(',').map(i => ({
-          name: i,
-          id: i,
-        })),
-        al: {
-          id: trackModel.albumTitle,
-          name: trackModel.albumTitle,
-        },
-        size: trackModel.fileSizeInBytes,
-      }
-    })
+  }
+
+  public async getTracksForPlaylist(playlistId: number) {
+    const tracks = await this.trackRepo
+      .createQueryBuilder('t')
+      .innerJoin(PlaylistTrack, 'pt', 'pt.trackId = t.trackId')
+      .where('pt.playlistId = :playlistId', { playlistId })
+      .getMany()
+
+    return tracks.map(track => this.normalizeTrack(track))
   }
 
   public async deleteTrack(trackId: number) {

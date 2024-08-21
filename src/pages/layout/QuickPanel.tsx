@@ -16,7 +16,6 @@ import dayjs from 'dayjs'
 import { useCallback, useMemo } from 'react'
 import SettingsIcon from '@mui/icons-material/Settings'
 import RestartAltIcon from '@mui/icons-material/RestartAlt'
-import ImageIcon from '@mui/icons-material/Image'
 import Brightness4Icon from '@mui/icons-material/Brightness4'
 import BrightnessHighIcon from '@mui/icons-material/BrightnessHigh'
 import { useNavigate } from 'react-router-dom'
@@ -151,10 +150,10 @@ export default function QuickPanel() {
               navigate('/setting')
             }} />
 
-            <SwitchCard title='wallpaper' subTitle='gallery' icon={<ImageIcon fontSize='small' />} onChange={() => {
-              onClose()
-              navigate('/wallpaper')
-            }} />
+            {/*<SwitchCard title='wallpaper' subTitle='gallery' icon={<ImageIcon fontSize='small' />} onChange={() => {*/}
+            {/*  onClose()*/}
+            {/*  navigate('/wallpaper')*/}
+            {/*}} />*/}
             <SwitchCard title={t`common.relaunch`} icon={<RestartAltIcon fontSize='small' />} onChange={() => {
               appRelaunch()
             }} />

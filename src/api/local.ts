@@ -10,7 +10,7 @@ export async function getLocalTrack(id: number) {
 
 export async function getLocalAlbumTrack(albumKey: string) {
   try {
-    const { data } = await ipcRenderer.invoke('track/get-tracks', albumKey)
+    const { data } = await ipcRenderer.invoke('track/get-album-tracks', albumKey)
     return data
   }
   catch (e) {}
