@@ -1,5 +1,5 @@
 import { Box, Button, Divider, Typography, useTheme } from '@mui/material'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import QueueMusicIcon from '@mui/icons-material/QueueMusic'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import { motion } from 'framer-motion'
@@ -11,8 +11,8 @@ import PlayListSkeleton from '@/pages/detail/PlayListSkeleton'
 import { formatDuring, randomPic } from '@/util/fn'
 import Image from '@/components/Image'
 import { useReplacePlayQueue } from '@/hooks/usePlayQueue'
-import { useQueryLocalPlaylistTrack } from '@/pages/local/hooks/useQueryTrack'
 import { useLocalStore } from '@/store/local'
+import { useQueryLikedTracks } from '@/pages/local/hooks/useQueryLiked'
 
 function Header({ data }: { data: any }) {
   const theme = useTheme()
@@ -73,7 +73,7 @@ function Header({ data }: { data: any }) {
                   style={{ minWidth: '96px' }}
                 >
                   <QueueMusicIcon fontSize='small'/>
-                  <Typography variant="caption">播放列表</Typography>
+                  <Typography variant="caption">列表</Typography>
                 </div>
                 <Divider flexItem variant='middle' orientation="vertical"/>
 
@@ -111,12 +111,12 @@ function Header({ data }: { data: any }) {
     </motion.div>
   )
 }
-export default function LocalPlaylistPage() {
-  const params = useParams()
-  const { data, isLoading, refetch } = useQueryLocalPlaylistTrack(+params.id)
+export default function LocalLikedPage() {
+  const { data, isLoading, refetch } = useQueryLikedTracks()
   const playlistData = useMemo(() => {
     return {
-      ...history.state.usr,
+      name: 'Liked Songs',
+      picUrl: 'https://cdn.dribbble.com/userupload/3005240/file/original-954788082556fd1aac4f983cce2af921.png',
       tracks: data?.tracks ?? [],
     }
   }, [data])
@@ -129,7 +129,7 @@ export default function LocalPlaylistPage() {
         }
         <Box className='h-4'></Box>
         {
-          playlistData.tracks && <LocalTrackList tracks={playlistData.tracks} playlistId={playlistData.id} reload={refetch} />
+          playlistData.tracks && <LocalTrackList tracks={playlistData.tracks} reload={refetch} />
         }
       </Box>
     </PageTransition>

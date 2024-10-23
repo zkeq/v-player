@@ -16,8 +16,8 @@ import useResponsiveSize from '@/components/nowPlaying/components/useResponsiveS
 import { SimpleTrack } from '@/types'
 import { playQueueStore } from '@/store/playQueue'
 import { usePlayer } from '@/hooks/usePlayer'
-import LikeToggle from '@/components/toggle/likeToggle'
 import PulseIcon from '@/components/nowPlaying/components/PulseIcon'
+import LikeToggleButton from '@/components/toggle/likeToggle'
 
 const MaterialYouStyle = forwardRef((_, ref) => {
   const theme = useTheme()
@@ -107,7 +107,7 @@ const MaterialYouStyle = forwardRef((_, ref) => {
             }
 
             <div>
-              <LikeToggle id={track.id} />
+              <LikeToggleButton track={track}></LikeToggleButton>
               <TrackMore track={track} />
             </div>
 

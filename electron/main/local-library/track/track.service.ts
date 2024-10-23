@@ -54,9 +54,8 @@ export class TrackService {
     return tracks.map(track => this.normalizeTrack(track))
   }
 
-  normalizeTrack(track: Track) {
+  public normalizeTrack(track: Track) {
     const trackModel = new TrackModel(track)
-
     return {
       id: trackModel.id,
       name: trackModel.fileName,
@@ -73,11 +72,20 @@ export class TrackService {
         name: trackModel.albumTitle,
       },
       size: trackModel.fileSizeInBytes,
+      liked: trackModel.love === 1,
+      local: true,
     }
   }
 
   public async getTracksForAlbums(albumKey: string) {
     const tracks = await this.trackRepo.findBy({ albumKey: albumKey ?? '' })
+
+    return tracks.map(track => this.normalizeTrack(track))
+
+  }
+
+  public async getTracksForLiked() {
+    const tracks = await this.trackRepo.findBy({ love: 1 })
 
     return tracks.map(track => this.normalizeTrack(track))
 

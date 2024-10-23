@@ -5,7 +5,7 @@ import { APPEARANCE, THEME_COLOR, useSettingStore } from '@/store/setting'
 import Themes from '@/plugins/themes'
 
 export default function useCreateTheme() {
-  const { appearance, themeColor, customTheme } = useSettingStore()
+  const { appearance, themeColor, customTheme, fontSize } = useSettingStore()
 
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
   const darkMode
@@ -13,14 +13,15 @@ export default function useCreateTheme() {
       ? prefersDarkMode
       : appearance === APPEARANCE.DARK
   const theme = useMemo(() => {
-    return createTheme(getDesignTokens(darkMode, themeColor, customTheme))
-  }, [darkMode, themeColor, customTheme])
+    return createTheme(getDesignTokens(darkMode, themeColor, customTheme, fontSize))
+  }, [darkMode, themeColor, customTheme, fontSize])
   return {
     theme,
   }
 }
 
 const typography = {
+  fontSize: 14,
   fontFamily: [
     'Quicksand',
     'Noto Sans SC',
@@ -32,7 +33,7 @@ const typography = {
   ].join(','),
 }
 
-export function getDesignTokens(isDark: boolean, color: THEME_COLOR, customTheme?: any): ThemeOptions {
+export function getDesignTokens(isDark: boolean, color: THEME_COLOR, customTheme?: any, fontSize?: number): ThemeOptions {
   let themeData
   if (color === THEME_COLOR.Customize && customTheme)
     themeData = customTheme
@@ -41,7 +42,10 @@ export function getDesignTokens(isDark: boolean, color: THEME_COLOR, customTheme
 
   if (themeData) {
     return {
-      typography,
+      typography: {
+        ...typography,
+        fontSize: fontSize || typography.fontSize,
+      },
       palette: {
         mode: isDark ? 'dark' : 'light',
         ...(isDark

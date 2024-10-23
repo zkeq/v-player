@@ -8,4 +8,5 @@ dayjs.extend(localizedFormat)
 export default async function () {
   useUserStore.getState().fetchAccount()
   useLocalStore.getState().refreshPlaylist()
+  useLocalStore.getState().refreshLikes()
 }

@@ -16,11 +16,12 @@ import LoadingButton from '@/components/button/LoadingButton'
 import { useReplacePlayQueue } from '@/hooks/usePlayQueue'
 import { useContextMenu } from '@/hooks/useContextMenu'
 
-function Cover({ data, subTitle, type, inset }: {
+function Cover({ data, subTitle, type, inset, noTitle }: {
   data: any
   subTitle?: string
   type: 'album' | 'playlist'
   inset?: boolean
+  noTitle?: boolean
 }) {
   const theme = useTheme()
   const coverBgUrl = sizeOfImage(toHttps(data.picUrl ?? data.coverImgUrl))
@@ -91,7 +92,7 @@ function Cover({ data, subTitle, type, inset }: {
             gradient={inset ? `linear-gradient(360deg, ${theme.palette.surface.main}e6 0%, rgb(0 0 0 / 0%) 100%)` : ''}/>
           <div className='absolute top-0 flex h-full w-full'>
             {
-              inset && (<Box className='flex items-end pr-16 py-4 pl-2' sx={{
+              !noTitle && inset && (<Box className='flex items-end pr-16 py-4 pl-2' sx={{
                 color: theme.palette.onSurface.main,
               }}>
                 <Typography className="line-clamp-2" variant="body2">
@@ -143,7 +144,7 @@ function Cover({ data, subTitle, type, inset }: {
 
         </Box>
         {
-          !inset && <CardContent sx={{ px: 1.5 }}>
+          !noTitle && !inset && <CardContent sx={{ px: 1.5 }}>
             <Typography className="line-clamp-1" variant="body2">
               {data.name}
             </Typography>

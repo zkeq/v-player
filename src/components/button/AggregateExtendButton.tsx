@@ -18,6 +18,8 @@ export default function AggregateExtendButton() {
     'setting',
     'local-album',
     'local-artist',
+    'local-playlist',
+    'local-liked',
     'moods_and_genres',
     'moods_and_genres_detail',
     'list_collection',

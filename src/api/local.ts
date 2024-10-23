@@ -2,8 +2,7 @@ import { ipcRenderer } from 'electron'
 
 export async function getLocalTrack(id: number) {
   try {
-    const { data } = await ipcRenderer.invoke('track/get-track', id)
-    return data
+    return ipcRenderer.invoke('track/get-track', id)
   }
   catch (e) {}
 }

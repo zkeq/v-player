@@ -3,7 +3,7 @@ import BrightnessHighIcon from '@mui/icons-material/BrightnessHigh'
 import BrightnessAutoIcon from '@mui/icons-material/BrightnessAuto'
 import LandscapeIcon from '@mui/icons-material/Landscape'
 import { useTranslation } from 'react-i18next'
-import { Button, Dialog, IconButton, TextField, Tooltip, Typography } from '@mui/material'
+import { Button, Dialog, IconButton, Slider, TextField, Tooltip, Typography } from '@mui/material'
 import { alpha, useTheme } from '@mui/material/styles'
 import { Box } from '@mui/system'
 import PaletteIcon from '@mui/icons-material/Palette'
@@ -98,7 +98,7 @@ function GenerateByLink({ open, onClose, onApplyTheme, type }: { open: boolean; 
 
 
 export default function ThemeSetting() {
-  const { appearance, setAppearance, themeColor, setThemeColor, setCustomTheme } = useSettingStore()
+  const { appearance, setAppearance, themeColor, fontSize, setThemeColor, setCustomTheme, setFontSize } = useSettingStore()
   const { t } = useTranslation()
   const { enqueueSnackbar } = useSnackbar()
   const theme = useTheme()
@@ -157,6 +157,13 @@ export default function ThemeSetting() {
     }
 
   }
+
+  function handleFontSizeChange(e: Event, val: number | number[]) {
+    console.log(val)
+    if (typeof val === 'number')
+      setFontSize(val)
+
+  }
   return <div>
     <Col variant='caption' title={t`common.appearance`} className='mb-4'>
     <Group exclusive items={[{
@@ -176,7 +183,7 @@ export default function ThemeSetting() {
     },
     ]} value={appearance} onChange={setAppearance}></Group>
     </Col>
-    <Col title={t`common.theme_color`} variant='caption' more={
+    <Col title={t`common.theme_color`} variant='caption' className='mb-4' more={
       <Tooltip title={t`main.setting.custom_theme`} placement='top'>
         <IconButton
           sx={{
@@ -223,6 +230,20 @@ export default function ThemeSetting() {
           title: t`theme.Customize`,
         },
       ]} value={themeColor} onChange={setThemeColor}></Group>
+    </Col>
+    <Col title={t`common.font_size`} variant='caption'>
+      <div className='w-1/3'>
+        <Slider
+          size='small'
+          value={fontSize}
+          step={2}
+          marks
+          min={10}
+          max={20}
+          onChange={handleFontSizeChange}
+        ></Slider>
+      </div>
+
     </Col>
     <GenerateByImage onApplyTheme={applyCustomTheme} ref={byImageRef} />
     <GenerateByLink open={open} onClose={() => setOpen(false)} onApplyTheme={applyCustomTheme} type={type} />

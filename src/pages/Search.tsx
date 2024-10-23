@@ -49,12 +49,13 @@ export default function Search() {
                         key={i.type}
                         type={i.type}
                         inset
+                        noTitle
                       ></Cover>
                     }
                     return <div key={i.object.id} className='flex flex-col gap-4'>
                       {content}
                       <div className='flex flex-col items-center'>
-                        <Typography variant='caption'>{ i.object.name }</Typography>
+                        <Typography variant='caption' className='line-clamp-2'>{ i.object.name }</Typography>
                         <Typography variant='caption'>{ i.type }</Typography>
                       </div>
                     </div>

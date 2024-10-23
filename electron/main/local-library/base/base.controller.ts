@@ -22,4 +22,9 @@ export class BaseController {
   async openPath(path: string) {
     this.desktop.openPath(path)
   }
+
+  @IpcHandle('show-file-in-dir')
+  async showFileInDirectory(path: string) {
+    this.desktop.showFileInDirectory(path)
+  }
 }

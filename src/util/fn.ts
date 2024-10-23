@@ -328,3 +328,18 @@ export function formatFrequency(frequency: number) {
   // 返回格式化后的字符串
   return `${formattedFrequency} kHz`
 }
+
+
+export function randomPic() {
+  const images = [
+    'https://cdn.dribbble.com/userupload/3005240/file/original-954788082556fd1aac4f983cce2af921.png',
+    'https://cdn.dribbble.com/userupload/7954142/file/original-4cd286ec775b9153936a20019196bcd5.jpg',
+    'https://cdn.dribbble.com/userupload/9980403/file/original-c02f32591b70a31916dcff4894e6225d.jpg',
+    'https://cdn.dribbble.com/userupload/6383523/file/original-fdc01c77ebfaa0216cff6bbad12b353f.jpg',
+    'https://cdn.dribbble.com/userupload/7493980/file/original-8f0a3d7df35ac545a825674534cc4775.png',
+    'https://cdn.dribbble.com/userupload/5937173/file/original-f14b5cf31374d9e829baab07bbf571a9.jpg',
+    'https://cdn.dribbble.com/users/10429876/screenshots/17908057/media/f790d6b040075136491e1c0194edba39.png',
+  ]
+  return images[Math.floor(Math.random() * images.length)]
+
+}

@@ -188,8 +188,12 @@
       "manage": "Manage Library",
       "playlist": "Playlists",
       "local_music": "Local Music",
+      "local_music_liked": "Liked Music",
       "local_music_playing": "Local Music",
-      "track_count": "Total {{track_count}} songs, total duration  {{track_duration}}, total size {{track_size}}"
+      "track_count": "Total {{track_count}} songs, total duration  {{track_duration}}, total size {{track_size}}",
+      "rename_playlist": "Rename Playlist",
+      "new_playlist": "Create Playlist",
+      "created_list": "Created Playlist"
     }
   },
   "common": {
@@ -226,6 +230,7 @@
     "en": "English",
     "setting": "Setting",
     "theme": "Theme",
+    "font_size": "Display fontSize",
     "playingMode": "Playing page style",
     "light": "light",
     "dark": "dark",

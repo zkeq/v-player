@@ -114,8 +114,8 @@ export default function MiniDrawer() {
       icon: <ComputerIcon sx={{ height: 20, width: 20 }} />,
       val: 'local-library',
       title: '本地音乐库',
-      to: '/local-library',
-      pathname: ['/local-library'],
+      to: '/local-library/tracks',
+      pathname: ['/local-library', '/local-library/tracks', '/local-library/artist', '/local-library/playlist', '/local-library/album'],
     },
   ]
 

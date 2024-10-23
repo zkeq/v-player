@@ -11,10 +11,12 @@ import Image from '@/components/Image'
 import { PlayIcon } from '@/components/icons/icons'
 import { queryAlbumTracks } from '@/pages/local/hooks/useQueryAlbum'
 import { useReplacePlayQueue } from '@/hooks/usePlayQueue'
+import { queryPlaylistTracks } from '@/pages/local/hooks/useQueryTrack'
 
-function LocalCover({ data, type }: {
+function LocalCover({ data, type, onContextMenu }: {
   data: any
   type: 'album' | 'playlist'
+  onContextMenu?: (e: any, data: any) => void
 }) {
   const theme = useTheme()
   const [isHovering, setIsHovering] = useState(false)
@@ -31,8 +33,16 @@ function LocalCover({ data, type }: {
   const handlePlay = useCallback(async (e: any) => {
     e.stopPropagation()
     try {
-      const tracks = await queryAlbumTracks(data.id)
-      replaceQueueAndPlay(tracks, 0, 'local', `本地音乐专辑：${data.name}`)
+      let tracks = []
+      if (type === 'album')
+        tracks = await queryAlbumTracks(data.id)
+
+      else
+        tracks = await queryPlaylistTracks(data.id)
+
+      if (tracks?.length)
+        replaceQueueAndPlay(tracks, 0, 'local', `本地音乐：${data.name}`)
+
     }
     catch (e) {
       console.log(e)
@@ -51,6 +61,7 @@ function LocalCover({ data, type }: {
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       onClick={jumpTo}
+      onContextMenu={e => onContextMenu(e, data)}
     >
       <Box>
         <Box
@@ -59,8 +70,8 @@ function LocalCover({ data, type }: {
             aspectRatio: 1,
           }}
         >
-          <Image src={data.picUrl} className="absolute"
-            gradient={`linear-gradient(360deg, ${theme.palette.surface.main}e6 0%, rgb(0 0 0 / 0%) 100%)`}/>
+          <Image src={data?.picUrl} className="absolute"
+            gradient={`linear-gradient(360deg, ${theme.palette.surface.main}e6 0%, rgb(0 0 0 / 0%) 100%)`} />
           <div className='absolute top-0 flex h-full w-full'>
             <Box className='flex items-end pr-16 py-4 pl-2' sx={{
               color: theme.palette.onSurface.main,

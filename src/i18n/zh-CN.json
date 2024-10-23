@@ -188,8 +188,12 @@
       "manage": "管理曲库",
       "playlist": "播放列表",
       "local_music": "本地音乐",
+      "local_music_liked": "喜欢的音乐",
       "local_music_playing": "本地音乐，请欣赏",
-      "track_count": "共 {{track_count}} 首, 总时长 {{track_duration}}, 总大小{{track_size}}"
+      "track_count": "共 {{track_count}} 首, 总时长 {{track_duration}}, 总大小{{track_size}}",
+      "rename_playlist": "重命名播放列表",
+      "new_playlist": "新建播放列表",
+      "created_list": "创建的播放列表"
     }
   },
   "common": {
@@ -231,6 +235,7 @@
     "dark": "深色",
     "theme_color": "主题色",
     "dark_theme": "深色主题",
+    "font_size": "显示字号",
     "appearance": "显示模式",
     "general": "常规",
     "source": "音源",

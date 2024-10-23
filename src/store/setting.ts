@@ -38,6 +38,7 @@ interface SettingState {
   appearance: APPEARANCE
   themeColor: THEME_COLOR
   customTheme: null | Record<'light' | 'dark', Record<string, string>>
+  fontSize: number
   quality: QUALITY_LEVEL
   locale: SupportedLanguage
   lyricTrans: boolean
@@ -59,6 +60,7 @@ interface SettingAction {
   setAppearance: (appearance: APPEARANCE) => void
   setThemeColor: (themeColor: THEME_COLOR) => void
   setCustomTheme: (customTheme: SettingState['customTheme']) => void
+  setFontSize: (fontSize: number) => void
   setQuality: (quality: QUALITY_LEVEL) => void
   setLocale: (locale: SettingState['locale']) => void
   setLyricTrans: (enable: SettingState['lyricTrans']) => void
@@ -76,6 +78,7 @@ export const useSettingStore = create(subscribeWithSelector(persist<SettingState
     appearance: APPEARANCE.DARK,
     themeColor: THEME_COLOR.GreenRockyMountains,
     customTheme: null,
+    fontSize: 14,
     quality: QUALITY_LEVEL.HIGHER,
     locale: 'zh-CN',
     lyricTrans: false,
@@ -95,6 +98,7 @@ export const useSettingStore = create(subscribeWithSelector(persist<SettingState
     setAppearance: appearance => set({ appearance }),
     setThemeColor: themeColor => set({ themeColor }),
     setCustomTheme: customTheme => set({ customTheme }),
+    setFontSize: fontSize => set({ fontSize }),
     setQuality: quality => set({ quality }),
     setLocale: locale => set({ locale }),
     setLyricTrans: lyricTrans => set({ lyricTrans }),

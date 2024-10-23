@@ -17,11 +17,11 @@ import TrackMore from '@/components/nowPlaying/TrackMore'
 import PodcastLink from '@/components/links/podcast'
 import ResourceThumbToggle from '@/components/toggle/ResourceThumbToggle'
 import { RESOURCE_TYPE } from '@/util/enum'
-import LikeToggle from '@/components/toggle/likeToggle'
 import MinimalButton from '@/components/button/MinimalButton'
 import { sizeOfImage } from '@/util/fn'
 import NowPlayingListToggleWithTip from '@/components/nowPlaying/NowPlayingListToggleWithTip'
 import NowPlayingBarToggle from '@/components/toggle/NowPlayingBarToggle'
+import LikeToggleButton from '@/components/toggle/likeToggle'
 
 const variants = {
   enter: (direction: number) => {
@@ -49,9 +49,12 @@ function NowPlayingBar() {
   const theme = useTheme()
   const { toggleNowPlaying } = useAppStore()
   const { track, volume, volumeIcon, isProgram } = usePlayerControl()
+  const isLocalMusic = useMemo(() => {
+    return track?.source?.fromType === 'local'
+  }, [track])
   const coverUrl = useMemo(() => {
     // 本地音乐返回的封面是bast64 不能加sizeOfImage参数处理
-    return track?.source?.fromType === 'local' ? track?.al?.picUrl : sizeOfImage(track?.coverUrl ?? track?.al?.picUrl ?? '')
+    return isLocalMusic ? track?.al?.picUrl : sizeOfImage(track?.coverUrl ?? track?.al?.picUrl ?? '')
   }, [track])
   const [isHovering, setIsHovering] = useState(false)
   const [cacheVolume, setCacheVolume] = useState(0)
@@ -69,8 +72,25 @@ function NowPlayingBar() {
       player.setVolume(0)
     }
   }
+  const title = useMemo(() => {
+
+    if (isLocalMusic)
+      return track?.al.name
+    else
+      return track?.al?.id ? <RouterLink to={`/album/${track.al.id}`}>{track.name}</RouterLink> : track?.name
+
+
+  }, [isLocalMusic, track])
   const subTitle = useMemo(() => {
-    if (isProgram && track) {
+
+    if (isLocalMusic) {
+      return <Typography className="line-clamp-1" variant="caption">
+        {
+          track?.ar.map(i => i.name).join('·')
+        }
+      </Typography>
+    }
+    else if (isProgram && track) {
       return <span><PodcastLink podcast={track.radio as any} /> - [{t`main.podcast.program`}]</span>
     }
     else if (track?.ar) {
@@ -81,7 +101,7 @@ function NowPlayingBar() {
     else {
       return <span>{t`common.unknown`}</span>
     }
-  }, [isProgram, track])
+  }, [isProgram, track, isLocalMusic])
   return (
     <motion.div
       style={{
@@ -173,7 +193,7 @@ function NowPlayingBar() {
             <div className="flex flex-col justify-center ml-2">
               <Typography className="line-clamp-1" variant='body2'>
                 {
-                  track?.al?.id ? <RouterLink to={`/album/${track.al.id}`}>{track.name}</RouterLink> : track?.name
+                  title
                 }
               </Typography>
               <Typography className="line-clamp-1 opacity-90" variant='caption'>
@@ -183,9 +203,8 @@ function NowPlayingBar() {
             {
               isProgram && track
                 ? <ResourceThumbToggle type={RESOURCE_TYPE.PROGRAM} id={track.id} liked={track.liked} />
-                : <LikeToggle id={track?.id} />
+                : <LikeToggleButton track={track}></LikeToggleButton>
             }
-
           </motion.div>
         </AnimatePresence>
       </div>
@@ -194,7 +213,10 @@ function NowPlayingBar() {
       </div>
       <div className="flex flex-1 items-center justify-end gap-1">
         <MinimalButton />
-        <PIPPlayerToggle />
+        {
+          !isLocalMusic && <PIPPlayerToggle />
+        }
+
         <Stack direction="row" sx={{ width: 130 }} alignItems="center" spacing={0.5}>
           <Tooltip title={ volume === 0 ? `${t`common.cancel`} ${t`common.mute`}` : t`common.mute` } placement='top'>
             <IconButton onClick={handleMute}>
@@ -209,7 +231,9 @@ function NowPlayingBar() {
         {/*  */}
         {/*</Tooltip>*/}
         <NowPlayingBarToggle />
-        <TrackMore track={track} />
+        {
+          !isLocalMusic && <TrackMore track={track} />
+        }
       </div>
     </Box>
     </motion.div>

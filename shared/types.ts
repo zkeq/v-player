@@ -32,4 +32,6 @@ export interface LocalTrack {
   sample: number
   dt: number
   source: TrackSource
+  liked: boolean
+  local: any
 }

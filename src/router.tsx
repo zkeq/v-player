@@ -38,6 +38,7 @@ import Minimal from '@/Minimal'
 import LocalSetting from '@/pages/setting/Local'
 import LocalArtistPage from '@/pages/local/components/Artist'
 import LocalPlaylistPage from '@/pages/local/components/Playlist'
+import LocalLikedPage from '@/pages/local/components/Liked'
 
 function lazyLoad(component: ReactNode) {
   return <Suspense>{component}</Suspense>
@@ -59,7 +60,7 @@ const router = createHashRouter(
         {
           id: 'redirect_home',
           path: '/',
-          element: <LocalLibrary />,
+          element: <Home />,
         },
         {
           id: 'home',
@@ -167,7 +168,7 @@ const router = createHashRouter(
         },
         {
           id: 'local-library',
-          path: '/local-library',
+          path: '/local-library/:type',
           element: <LocalLibrary />,
         },
         {
@@ -187,8 +188,13 @@ const router = createHashRouter(
         },
         {
           id: 'local-setting',
-          path: '/local-setting',
+          path: '/local/setting',
           element: <LocalSetting />,
+        },
+        {
+          id: 'local-liked',
+          path: '/local/liked',
+          element: <LocalLikedPage />,
         },
         {
           id: 'wallpaper',

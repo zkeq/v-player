@@ -3,8 +3,10 @@ import { useTheme } from '@mui/material/styles'
 import { memo, useEffect, useState } from 'react'
 import { Button, Card, Typography } from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import SettingsIcon from '@mui/icons-material/Settings'
+import FavoriteIcon from '@mui/icons-material/Favorite'
+
 import { sampleSize } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import PageTransition from '@/components/PageTransition'
@@ -99,8 +101,16 @@ function FavCard() {
 export default function LocalLibrary() {
   const theme = useTheme()
   const { t } = useTranslation()
-  const [currentTab, setCurrentTab] = useState('tracks')
+  const { type  } = useParams()
   const navigate = useNavigate()
+
+  const [currentTab, setCurrentTab] = useState('tracks')
+  useEffect(() => {
+    setCurrentTab(type)
+  }, [type])
+  function switchTab(tab: string) {
+    navigate(`/local-library/${tab}`)
+  }
   return <PageTransition className='pr-2'>
     <div
       className='grid grid-cols-4 gap-4 mb-2'
@@ -109,15 +119,15 @@ export default function LocalLibrary() {
       <FavCard />
       <div className='grid grid-cols-1 grid-rows-4 gap-2 col-span-1'>
         <SwitchCard color={theme.palette.tertiaryContainer.main} title={t`main.local.manage`} icon={<SettingsIcon fontSize='small' />} onChange={() => {
-          navigate('/local-setting')
+          navigate('/local/setting')
         }} />
-        {/*<SwitchCard color={theme.palette.secondaryContainer.main} title={t`main.local.open_dir`} icon={<AlbumIcon fontSize='small' />} onClick={() => {*/}
-        {/*  ipcRenderer.invoke('base/open-path', '/Users/yoda/Downloads')*/}
-        {/*}} />*/}
+        <SwitchCard color={theme.palette.secondaryContainer.main} title={t`main.local.local_music_liked`} icon={<FavoriteIcon fontSize='small' />} onClick={() => {
+          navigate('/local/liked')
+        }} />
       </div>
     </div>
     <Box className='h-full flex flex-col pr-2' sx={{ color: theme.palette.onSurface.main }}>
-      <MYTabs value={currentTab} onChange={tabVal => setCurrentTab(tabVal)}
+      <MYTabs value={currentTab} onChange={tabVal => switchTab(tabVal)}
               tabs={[
                 { value: 'tracks', label: t`main.tracks` },
                 { value: 'album', label: t`main.albums` },

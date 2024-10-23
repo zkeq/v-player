@@ -21,6 +21,8 @@ export default function Main({
     'daily',
     'local-album',
     'local-artist',
+    'local-playlist',
+    'local-liked',
     'video',
     'moods_and_genres_detail',
     'list_collection',

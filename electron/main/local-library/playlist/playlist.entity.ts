@@ -8,4 +8,6 @@ export class Playlist {
 
   @Column()
   name: string
+
+  artworkUrl: string
 }

@@ -5,10 +5,10 @@ import SkipNextIcon from '@mui/icons-material/SkipNextOutlined'
 import { alpha, useTheme } from '@mui/material/styles'
 import { usePlayerStore } from '@/store/player'
 import MotionImage from '@/components/Image'
-import LikeToggle from '@/components/toggle/likeToggle'
 import { usePlayer } from '@/hooks/usePlayer'
 import NowPlayingSlider from '@/components/nowPlaying/NowPlayingSlider'
 import PlayToggle from '@/components/toggle/PlayToggle'
+import LikeToggleButton from '@/components/toggle/likeToggle'
 
 export default function NowPlayingMiniBar(props: { slot?: React.ReactElement }) {
   const { track, playing } = usePlayerStore()
@@ -32,7 +32,7 @@ export default function NowPlayingMiniBar(props: { slot?: React.ReactElement }) 
 
     <div className="flex flex-col justify-between h-full p-1">
       <div className="flex justify-between">
-        <LikeToggle size='small' id={track?.id} />
+        <LikeToggleButton track={track} size='small'></LikeToggleButton>
         { props.slot }
       </div>
       <div className="flex justify-center flex-col items-center">

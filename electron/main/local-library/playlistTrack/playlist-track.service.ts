@@ -28,12 +28,13 @@ export class PlaylistTrackService {
       .getCount()
   }
 
-  public async deletePlaylistTracksForNonexistentTracks() {
+  public async deletePlaylistTracksForNonexistent() {
     try {
       const res = await this.playlistTrackRepository
         .createQueryBuilder()
         .delete()
         .where('trackId NOT IN (SELECT trackId FROM track)')
+        .orWhere('playlistId NOT IN (SELECT id FROM playlist)')
         .execute()
       return res
     }
